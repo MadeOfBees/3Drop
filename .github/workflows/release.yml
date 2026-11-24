@@ -1,0 +1,106 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+# One job builds and publishes, so it holds the write token throughout: every download in it is
+# pinned by SHA-256 and the build image by digest.
+permissions:
+  contents: write
+
+# One publication at a time, each reading the releases afresh: two tags pushed together cannot both
+# take Latest from a stale view. Runs queue behind the one running (up to 100), none canceled.
+concurrency:
+  group: release
+  queue: max
+  cancel-in-progress: false
+
+# GitHub starts a job's processes with SIGPIPE ignored, where a terminal leaves it on. A command whose
+# reader stops early then fails with "Broken pipe" instead of ending quietly, and the tests expect a
+# terminal's behaviour, so every step puts SIGPIPE back first.
+defaults:
+  run:
+    shell: env --default-signal=PIPE bash -e {0}
+
+jobs:
+  release:
+    name: build and publish release
+    runs-on: ubuntu-24.04
+    steps:
+      # Full history: `git describe` needs the tags and every commit, and the jump check every tag.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false # the gate runs every test and downloaded tools: no token left in .git/config
+
+      # From the tag alone, before anything is built (tools/release.sh): release N is title version
+      # N x 1024 and store revision N, so no other tag renumbers it. Any other v* tag stops here.
+      - name: Number the release
+        run: |
+          numbered=$(bash tools/release.sh number "$GITHUB_REF_NAME")
+          read -r n version <<<"$numbered"
+          echo "STORE_REVISION=$n" >>"$GITHUB_ENV"
+          echo "BUILD_NUMBER=$version" >>"$GITHUB_ENV"
+
+      # The libraries' exact sources, before the long gate: the pinned image's package list must give
+      # the versions tools/librarySources.tsv names, and every download its SHA-256, or the release
+      # stops here with nothing built or published (tools/librarySources.sh).
+      - name: Gather the libraries' sources
+        run: bash tools/librarySources.sh .
+
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends build-essential jq qrencode unzip zlib1g-dev libmbedtls-dev
+
+      - run: tools/bootstrapCIPackagingTools.sh
+
+      - run: tools/check.sh
+
+      # The release asset, never an Actions artifact: only release URLs are stable. -s 10 draws the
+      # code about 410 px across (qrencode's default is about 120): more pixels a module for a
+      # camera. The README's codes encode the fixed releases/latest URLs: they are in docs/images.
+      - name: Generate install QR for the release asset URL
+        run: |
+          URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/${GITHUB_REF_NAME}/3drop.cia"
+          qrencode -s 10 -o 3drop-qr.png "$URL"
+          echo "QR target: $URL"
+
+      - name: Stamp UniStore manifest for this release
+        run: |
+          tools/stampUnistore.sh "${GITHUB_REF_NAME}" "$STORE_REVISION"
+          cat 3drop.unistore
+
+      # Every other asset, listed once in tools/release.sh: all are built by now, and the sums file is
+      # the last one made, so what it lists is what is published.
+      - name: Checksum the assets
+        run: bash tools/release.sh sums .
+
+      # Checked against the releases published now, not the tags at checkout: a published release
+      # never changes, and no release skips a number no tag holds. Published without Latest, then
+      # Latest goes to the highest published release, whatever order the jobs finished in. A refused
+      # release is not published again, but Latest is still set (the same release again changes
+      # nothing), so a rerun repairs a run that died between its create and its edit. The page opens
+      # with the fixed install-and-update paragraph (--notes prepends it to the generated notes); the
+      # page stays editable, and nothing here rewrites one.
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          published() { gh release list --exclude-drafts --exclude-pre-releases --limit 1000 --json tagName --jq '.[].tagName' >"$RUNNER_TEMP/published"; }
+          published
+          git tag -l 'v*' >"$RUNNER_TEMP/tags"
+          refused=0
+          bash tools/release.sh check "$GITHUB_REF_NAME" "$RUNNER_TEMP/published" "$RUNNER_TEMP/tags" || refused=1
+          if [ "$refused" = 0 ]; then
+            gh release create "${GITHUB_REF_NAME}" $(bash tools/release.sh assets) SHA256SUMS \
+              --title "${GITHUB_REF_NAME}" \
+              --notes "$(bash tools/release.sh notes "$GITHUB_REPOSITORY")" \
+              --generate-notes \
+              --latest=false
+            published
+          fi
+          latest=$(bash tools/release.sh latest "$RUNNER_TEMP/published")
+          gh release edit "$latest" --latest
+          echo "Latest is $latest"
+          exit "$refused"

@@ -1,0 +1,7 @@
+# LF in every checkout, whatever core.autocrlf says: the docker build runs tools/*.sh and reads
+# res/buildCIA.rsf in Linux, where a CR breaks both and make stops with "no 3Drop title id".
+* text=auto eol=lf
+
+# Never converted.
+*.png binary
+*.wav binary

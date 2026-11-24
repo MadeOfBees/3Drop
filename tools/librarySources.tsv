@@ -1,0 +1,42 @@
+# The libraries 3Drop links, as the pinned build image holds them (tools/lint.Dockerfile), and where
+# their exact sources and devkitPro's build recipes come from. tools/librarySources.sh reads this file
+# at every release: it stops unless `dkp-pacman -Q` in the image gives each `library` row's version,
+# and unless every `file` row downloads to its SHA-256.
+#
+# Tab-separated, one row a line; a line that starts with # is a comment.
+#   library  <package>  <version, as dkp-pacman -Q prints it>  <license>  <upstream>  <devkitPro's recipe at that version's commit>
+#   file     <package>  <source|recipe>  <name>  <sha256>  <url>  [<fallback url>]
+#
+# To bump a library (after changing the image, or when a release stops with "the build image has"):
+#   1. docker run --rm "$(sed -n 's/^FROM //p' tools/lint.Dockerfile)" dkp-pacman -Q gives the version.
+#   2. In github.com/devkitPro/pacman-packages, find the commit that made that version of the
+#      package's folder (its history names it). That is the recipe's commit: change it in the
+#      library row and in every recipe URL below.
+#   3. The recipe's PKGBUILD lists the source's URL and SHA-256; a new patch file is a new recipe row.
+#   4. sha256sum each file you now name, and put it on its row.
+#   5. bash tools/librarySources.sh <folder> must then pass: it checks every row against the image
+#      and the network.
+# A URL that dies is replaced here, never the hash: the hash is what makes the bytes the exact ones.
+#
+# A downloaded source is stored as it came; a recipe is the PKGBUILD and the patches it applies.
+# newlib, libgcc and the other toolchain pieces are devkitARM's, not listed here.
+library	libctru	2.7.0-1	Zlib	https://github.com/devkitPro/libctru	https://github.com/devkitPro/pacman-packages/tree/f0075bc1f97844d5ce63edc9a60dcb81d2b1138c/libctru
+file	libctru	source	libctru-2.7.0.tar.gz	c0b8a5048e15a0ae02772e6db0188f5571e8c26d064d7962212a40681f0d18b3	https://github.com/devkitPro/libctru/archive/v2.7.0.tar.gz
+file	libctru	recipe	PKGBUILD	e3ded946070a3036d78756a3467f61e72c210f27a6901baa227661396d29214f	https://raw.githubusercontent.com/devkitPro/pacman-packages/f0075bc1f97844d5ce63edc9a60dcb81d2b1138c/libctru/PKGBUILD
+library	citro3d	1.7.1-2	Zlib	https://github.com/devkitPro/citro3d	https://github.com/devkitPro/pacman-packages/tree/bd937347d7e419dec739aecfe8b7c89f18680704/citro3d
+file	citro3d	source	citro3d-1.7.1.tar.gz	c920515a791442e81e0c2c8867dde81bf14aca17eacb2709b4a3a3c61699250c	https://github.com/devkitPro/citro3d/archive/v1.7.1.tar.gz
+file	citro3d	recipe	PKGBUILD	20ebf3117de9273d824545cd0fcbfb993bb64cb797b03bc0046f50176bdd90ce	https://raw.githubusercontent.com/devkitPro/pacman-packages/bd937347d7e419dec739aecfe8b7c89f18680704/citro3d/PKGBUILD
+library	citro2d	1.7.0-1	Zlib	https://github.com/devkitPro/citro2d	https://github.com/devkitPro/pacman-packages/tree/5305c7004e1c4f89c348963ccf45df2b733f1b36/citro2d
+file	citro2d	source	citro2d-1.7.0.tar.gz	f311d1decb64668980b7a7a917a9b936a40025265df921e251f5f0537b94b86b	https://github.com/devkitPro/citro2d/archive/v1.7.0.tar.gz
+file	citro2d	recipe	PKGBUILD	66bd554c94b273cf6597748df1cbd027d969f832b6bca2afe762ac3797b4555c	https://raw.githubusercontent.com/devkitPro/pacman-packages/5305c7004e1c4f89c348963ccf45df2b733f1b36/citro2d/PKGBUILD
+library	3ds-curl	8.4.0-1	curl	https://curl.se/libcurl/	https://github.com/devkitPro/pacman-packages/tree/3f3e95263631f6c6e29522459d56037ca662c7be/3ds/curl
+file	3ds-curl	source	curl-8.4.0.tar.xz	16c62a9c4af0f703d28bda6d7bbf37ba47055ad3414d70dec63e2e6336f2a82d	https://curl.se/download/curl-8.4.0.tar.xz	https://github.com/curl/curl/releases/download/curl-8_4_0/curl-8.4.0.tar.xz
+file	3ds-curl	recipe	PKGBUILD	6346b0079b8a6c68cc82d8142f59a208af9cbfc821bca61d8fc5fa9111958287	https://raw.githubusercontent.com/devkitPro/pacman-packages/3f3e95263631f6c6e29522459d56037ca662c7be/3ds/curl/PKGBUILD
+file	3ds-curl	recipe	curl-8.4.0.patch	e41d19d24631f3dce4a0e1c5f9fd92c36f4ddd803d07a943507dab525813ecbe	https://raw.githubusercontent.com/devkitPro/pacman-packages/3f3e95263631f6c6e29522459d56037ca662c7be/3ds/curl/curl-8.4.0.patch
+library	3ds-mbedtls	2.28.8-1	Apache-2.0 OR GPL-2.0-or-later	https://github.com/Mbed-TLS/mbedtls	https://github.com/devkitPro/pacman-packages/tree/eb53bd49cb75a713e25f0bd6154209255e15d37c/3ds/mbedtls
+file	3ds-mbedtls	source	mbedtls-2.28.8.tar.gz	4fef7de0d8d542510d726d643350acb3cdb9dc76ad45611b59c9aa08372b4213	https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/v2.28.8.tar.gz
+file	3ds-mbedtls	recipe	PKGBUILD	1d60a8b8ef022f4c8e5785edd1292c0b7c155b0361b768c6b594d90247fd8216	https://raw.githubusercontent.com/devkitPro/pacman-packages/eb53bd49cb75a713e25f0bd6154209255e15d37c/3ds/mbedtls/PKGBUILD
+file	3ds-mbedtls	recipe	mbedtls-2.28.8.patch	84892ec63ab68804a582364d8c4bd6c8dfd0d697ed175bddcd5b7339cce35563	https://raw.githubusercontent.com/devkitPro/pacman-packages/eb53bd49cb75a713e25f0bd6154209255e15d37c/3ds/mbedtls/mbedtls-2.28.8.patch
+library	3ds-zlib	1.3.1-1	Zlib	https://zlib.net/	https://github.com/devkitPro/pacman-packages/tree/3d222f5a92c74c500a990d07124a35a19e2825dc/3ds/zlib
+file	3ds-zlib	source	zlib-1.3.1.tar.xz	38ef96b8dfe510d42707d9c781877914792541133e1870841463bfa73f883e32	https://github.com/madler/zlib/releases/download/v1.3.1/zlib-1.3.1.tar.xz	https://distfiles.macports.org/zlib/zlib-1.3.1.tar.xz
+file	3ds-zlib	recipe	PKGBUILD	7dbc39b28d37c19f57b3b5f92ea512bc3c6a5653cb26fb0a1f9cfeddd120f187	https://raw.githubusercontent.com/devkitPro/pacman-packages/3d222f5a92c74c500a990d07124a35a19e2825dc/3ds/zlib/PKGBUILD

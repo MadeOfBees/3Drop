@@ -1,0 +1,4 @@
+external-sources=true
+source-path=SCRIPTDIR
+# usage's status is optional (tools/lib.sh): a bare `usage` is the call a tool cannot take
+disable=SC2119

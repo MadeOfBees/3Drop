@@ -1,0 +1,38 @@
+name: Feature request
+description: An idea for a new command, option or behavior
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        3Drop is a one-person project, so a request is read as time allows, and not every one is taken. If you mean to write the change yourself, say so here first: [CONTRIBUTING.md](https://github.com/MadeOfBees/3Drop/blob/HEAD/CONTRIBUTING.md) asks for an issue before anything beyond a small fix.
+
+        **Never paste your key, `.env` or `key.txt`.** A security problem is not for a public issue: see the [security policy](https://github.com/MadeOfBees/3Drop/blob/HEAD/SECURITY.md).
+  - type: textarea
+    id: problem
+    attributes:
+      label: What you are trying to do
+      description: "The job, and what gets in its way today."
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What you would like 3Drop to do
+      description: "A command, an option or a change on the console's screen, as you picture it."
+    validations:
+      required: true
+  - type: dropdown
+    id: part
+    attributes:
+      label: Which part
+      options:
+        - The app on the console
+        - The tools on the PC
+        - Both
+        - Not sure
+  - type: textarea
+    id: instead
+    attributes:
+      label: What you do instead today
+      description: "Another tool, or a workaround, if you have one."

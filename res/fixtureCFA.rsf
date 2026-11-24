@@ -1,0 +1,16 @@
+BasicInfo:
+  Title                   : "TEST"
+  ProductCode             : "CTR-P-TEST"
+  Logo                    : None
+
+TitleInfo:
+  Category                : Application
+  UniqueId                : 0xFF3F0
+  Version                 : 2
+
+Option:
+  UseOnSD                 : true
+  FreeProductCode         : true
+  MediaFootPadding        : false
+  EnableCrypt             : false
+  EnableCompress          : false

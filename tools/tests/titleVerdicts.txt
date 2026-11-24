@@ -1,0 +1,22 @@
+# <title id> <the device's refusal, or ok> <what it is>: testInstall.c holds install, ls title: and uninstall to it.
+000400000f800100 ok an application
+0004000e00030000 ok a patch at the lowest application uid
+0004008c0fffff00 ok DLC at the highest
+0004008c00190a02 ok DLC index 2 (Megami Meguri's)
+0004000000012302 unmanaged variation 2: a Dev Menu app on NAND
+0004000e00f80102 unmanaged a patch of one
+0004000e0002ff00 unmanaged uid 0x2FF: a system title's
+0004008c00008800 unmanaged Internet Browser DLC
+0004008c10000000 unmanaged uid 0x100000
+0004008c10030000 unmanaged uid 0x100300: in range were it cut to 20 bits
+0004001b0f800100 unmanaged system data archive
+000400300f800100 unmanaged applet
+0004009b0f800100 unmanaged shared data archive
+000400db0f800100 unmanaged system data archive (auto-update)
+000401300f800100 unmanaged module
+000401380f800100 unmanaged firmware
+000480040f800100 unmanaged DSiWare
+000480050f800100 unmanaged DSi system application
+0004800f0f800100 unmanaged DSi system data
+0004000003d37201 self 3Drop's uid in another variation
+0004000e03d37200 self 3Drop's patch

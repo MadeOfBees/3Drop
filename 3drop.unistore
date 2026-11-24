@@ -1,0 +1,43 @@
+{
+	"storeInfo": {
+		"title": "3Drop",
+		"author": "MadeOfBees",
+		"description": "Wireless CIA installs and file transfer",
+		"file": "3drop.unistore",
+		"url": "https://github.com/MadeOfBees/3Drop/releases/latest/download/3drop.unistore",
+		"version": 3,
+		"revision": 1
+	},
+	"storeContent": [
+		{
+			"info": {
+				"title": "3Drop",
+				"author": "MadeOfBees",
+				"description": "Install CIAs over Wi-Fi from your computer's terminal or from a QR code. Syncs LayeredFS files, moves SD card files and updates itself.",
+				"category": ["utility"],
+				"console": ["3DS"],
+				"license": "GPL-3.0-or-later",
+				"version": "dev",
+				"last_updated": "1970-01-01 at 00:00 (UTC)"
+			},
+			"Install 3Drop (CIA)": [
+				{
+					"type": "downloadFile",
+					"file": "https://github.com/MadeOfBees/3Drop/releases/latest/download/3drop.cia",
+					"output": "sdmc:/3drop.cia",
+					"message": "Downloading 3Drop..."
+				},
+				{
+					"type": "installCia",
+					"file": "sdmc:/3drop.cia",
+					"message": "Installing 3Drop..."
+				},
+				{
+					"type": "deleteFile",
+					"file": "sdmc:/3drop.cia",
+					"message": "Cleaning up..."
+				}
+			]
+		}
+	]
+}

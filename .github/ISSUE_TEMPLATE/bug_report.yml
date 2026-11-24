@@ -1,0 +1,55 @@
+name: Bug report
+description: Something 3Drop or its tools did wrong
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Never paste your key, `.env` or `key.txt`.** Leave out `bash -x` or `set -x` output too, which can print it, and crop any photo of the console's screen that shows it (`tools/device.sh screenshot` blacks it out).
+
+        A security problem is not for a public issue: see the [security policy](https://github.com/MadeOfBees/3Drop/blob/HEAD/SECURITY.md).
+  - type: input
+    id: tools-version
+    attributes:
+      label: Tools release
+      description: "Run `tools/device.sh --version` in your clone and paste what it prints."
+      placeholder: v1
+    validations:
+      required: true
+  - type: input
+    id: console-version
+    attributes:
+      label: 3Drop release on the console
+      description: "The top screen's top-right line reads `<ip>:1337   <release>   build <number>`: paste the release."
+      placeholder: v1
+    validations:
+      required: true
+  - type: dropdown
+    id: host
+    attributes:
+      label: Your PC
+      options:
+        - Linux
+        - macOS
+        - WSL
+        - Git Bash
+    validations:
+      required: true
+  - type: textarea
+    id: happened
+    attributes:
+      label: What happened
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+  - type: textarea
+    id: command
+    attributes:
+      label: The command and its output
+      description: "Take the key out of both. The exit status helps (`echo $?`)."
+      render: shell
+    validations:
+      required: true

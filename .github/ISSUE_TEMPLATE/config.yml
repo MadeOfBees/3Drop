@@ -1,0 +1,4 @@
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/MadeOfBees/3Drop/security/advisories/new
+    about: Privately, through GitHub's private vulnerability reporting. Never in a public issue.

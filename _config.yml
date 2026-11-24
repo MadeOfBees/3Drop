@@ -1,0 +1,49 @@
+# The docs site: GitHub Pages' own Jekyll serves the repo root (Settings > Pages: branch main, folder / (root)).
+# README.md is the home page and docs/ keeps its pages; assets/main.scss adds three small CSS fixes. No page needs
+# front matter.
+
+title: 3Drop
+description: A Nintendo 3DS homebrew app that installs CIAs sent over Wi-Fi from a terminal on a PC.
+url: https://madeofbees.github.io
+baseurl: /3Drop
+github_username: MadeOfBees
+
+# One of the themes GitHub Pages ships. It is the only one with a header menu.
+theme: minima
+
+# The header menu, in the order of the README's Documentation section.
+header_pages:
+  - docs/commands.md
+  - docs/gui-bridge.md
+  - docs/file-transfer.md
+  - docs/configuration.md
+  - docs/safety.md
+  - docs/troubleshooting.md
+  - docs/building.md
+  - docs/benchmarking.md
+
+# Pages already turns on jekyll-titles-from-headings: each page's title is its first heading. strip_title removes
+# that heading from the body, because minima prints the title itself.
+titles_from_headings:
+  enabled: true
+  strip_title: true
+
+# Pages already turns on jekyll-optional-front-matter (docs/*.md need no front matter) and jekyll-readme-index
+# (README.md becomes the home page). Do not also publish the raw .md files beside the pages built from them.
+optional_front_matter:
+  remove_originals: true
+readme_index:
+  remove_originals: true
+
+# The repo root is the site, so name what is not part of it. LICENSE and SECURITY.md stay, because the README links
+# to them, and so does CONTRIBUTING.md: Pages never turns a file of that name into a page unless include names it.
+# (A whitelist, exclude "*" with include, does not work in Jekyll 3.10: include does not reach inside docs/.)
+# A new top-level file or folder that is not part of the site goes on this list.
+include:
+  - CONTRIBUTING.md
+exclude:
+  - 3drop.unistore
+  - Makefile
+  - res
+  - src
+  - tools

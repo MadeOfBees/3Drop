@@ -1,0 +1,18 @@
+The certificate bundle 3Drop ships, cacert.pem: Mozilla's list of the roots a browser trusts, as curl.se
+publishes it, byte for byte.
+
+Source    https://curl.se/ca/cacert.pem (about https://curl.se/docs/caextract.html)
+Checksum  https://curl.se/ca/cacert.pem.sha256, kept here as cacert.pem.sha256 (`sha256sum -c` takes it)
+Data from Mozilla as of Thu Nov 5 04:12:01 2026 GMT (the file's own header says so)
+License   Mozilla Public License 2.0, as curl.se gives it for the extract; the file is not edited, so
+          its header stays whole. 3Drop's own code is GPL-3.0-or-later (../LICENSE).
+
+What it is for: src/caBundle.S puts it into the app (the CIA has no RomFS), and src/certs.c
+hands it to libcurl (CURLOPT_CAINFO_BLOB) for every fetch of the certificate list that has no list on
+the card that reads to be checked against: the first use, a list that will not read, and a list too old to
+vouch for curl.se's current certificate. Every other download is checked against the card's list,
+sdmc:/config/ssl/cacert.pem, as before.
+
+To refresh it: run res/refreshCacert.sh. It fetches both files from curl.se, refuses a file that does not
+match its checksum or holds no certificate, and puts them here. Nothing fetches at build time. Then run
+the host tests (testCerts reads this file and its checksum) and build.

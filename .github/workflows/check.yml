@@ -1,0 +1,37 @@
+name: check
+
+# push: branches here; pull_request: a fork's PR, which no push here sees (a PR from here runs both).
+on:
+  push:
+    branches: ['**'] # not a v* tag: release.yml gates that
+  pull_request:
+
+permissions:
+  contents: read
+
+# GitHub starts a job's processes with SIGPIPE ignored, where a terminal leaves it on. A command whose
+# reader stops early then fails with "Broken pipe" instead of ending quietly, and the tests expect a
+# terminal's behaviour, so every step puts SIGPIPE back first.
+defaults:
+  run:
+    shell: env --default-signal=PIPE bash -e {0}
+
+jobs:
+  check:
+    name: lint, build, test and package
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false # the gate runs every test and downloaded tools: no token left in .git/config
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends build-essential unzip zlib1g-dev libmbedtls-dev
+      - run: tools/bootstrapCIPackagingTools.sh
+      - run: tools/check.sh
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: 3drop-3ds-build
+          path: |
+            3drop.cia
+            3drop.3dsx
+            3drop.elf
+            3drop.smdh

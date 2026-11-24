@@ -1,0 +1,12 @@
+version: 2
+updates:
+  # Both workflows pin each action to a full commit with its version in a comment: Dependabot moves both.
+  # One pull request a week, whatever number of actions it updates.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns:
+          - "*"

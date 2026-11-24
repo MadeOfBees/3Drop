@@ -1,0 +1,27 @@
+---
+---
+
+@import "minima";
+
+// Three small fixes to minima: code and tables on a phone, and a menu with eight labels.
+
+// A phone: long code (URLs, option lists) breaks inside the line, and a wide table scrolls inside its own box,
+// so neither widens the page.
+code {
+  overflow-wrap: anywhere;
+}
+
+@include media-query($on-palm) {
+  table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+// Wider than a phone (minima's $on-palm is 600px): eight menu labels do not fit one row, so wrap between them, never
+// inside one. (On a phone the menu is already a list.)
+@media screen and (min-width: 601px) {
+  .site-nav .page-link {
+    display: inline-block;
+  }
+}
